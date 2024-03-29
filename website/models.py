@@ -1,15 +1,18 @@
-# from typing import Optional
-# import sqlalchemy as sa
-# import sqlalchemy.orm as so
-# from website import db
-#
-# class User(db.Model):
-#     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-#     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
-#                                                 unique=True)
-#     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True,
-#                                              unique=True)
-#     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-#
-#     def __repr__(self):
-#         return '<User {}>'.format(self.username)
+from . import db
+from flask_login import UserMixin
+from sqlalchemy.sql import func
+
+
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    data = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True)
+    password = db.Column(db.String(150))
+    first_name = db.Column(db.String(150))
+    notes = db.relationship('Note')
