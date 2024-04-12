@@ -1,0 +1,50 @@
+<!--{% extends "base.html" %}
+{% block title %}Select Team{% endblock %}
+{% block content %}
+<form method="POST">
+  <h3 align="center">Select Team</h3>
+  <div class="form-group">
+    <label for="team">Choose Your Team</label>
+    <select class="form-control" id="team" name="team_id">
+      {% for team in teams %}
+      <option value="{{ team.id }}">{{ team.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <br />
+  <button type="submit" class="btn btn-primary">Select</button>
+</form>
+{% endblock %}-->
+
+<!-- {% extends "base.html" %}
+
+{% block title %}Select Team{% endblock %}
+
+{% block content %}
+  <h1>Select Team</h1>
+  <ul>
+    {% for team in teams %}
+      <li>{{ team.name }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Select Team{% endblock %}
+
+{% block content %}
+  <h1>Select Team</h1>
+  <form method="POST" action="{{ url_for('views.update_teams_followed') }}">
+    <ul>
+      {% for team in teams %}
+        <li>
+          <input type="checkbox" name="teams_followed" value="{{ team.name }}">
+          <label>{{ team.name }}</label>
+        </li>
+      {% endfor %}
+    </ul>
+    <button type="submit" class="btn btn-primary">Update Teams Followed</button>
+  </form>
+{% endblock %}
