@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from website import db
 
+
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.String(10000))
@@ -17,6 +18,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False)
     teamsFollowed = db.Column(db.String(255))  # Add this line for the new column
     notes = db.relationship('Note')
+
 
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)

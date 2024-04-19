@@ -90,3 +90,5 @@ def update_teams_followed():
     db.session.commit()
     flash('Teams followed updated successfully!', category='success')
     return redirect(url_for('views.select_team'))
+
+

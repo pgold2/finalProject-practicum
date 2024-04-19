@@ -109,3 +109,20 @@ def select_team():
 
     teams = Team.query.all()
     return render_template('select_team.html', teams=teams)
+
+
+@auth.route('/add_team', methods=['GET', 'POST'])
+@login_required
+def add_team():
+    if request.method == 'POST':
+        team_id = request.form.get('team')
+        team = Team.query.get(team_id)
+        if team:
+            current_user.teams_followed.append(team)
+            db.session.commit()
+            flash('Team added successfully!', category='success')
+            return redirect(url_for('views.home'))
+        else:
+            flash('Team not found!', category='error')
+    teams = Team.query.all()
+    return render_template('add_team.html', teams=teams,user=current_user)
