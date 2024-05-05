@@ -23,10 +23,10 @@ def home():
     # Check if the request was successful
     if response.status_code == 200:
         # Render the template with the data
-        teams_data = response.json()['response']
+        teams_name = response.json()['response']
     else:
         # If the request failed, return an error message
-        teams_data = None
+        teams_name = None
 
     # added this to display user's name and team
     user_name = current_user.first_name  # Assuming the user's first name is stored in the database
@@ -46,7 +46,7 @@ def home():
             flash('Note added!', category='success')
 
     return render_template('home.html', user=current_user, user_name=user_name, teamsFollowed=teamsFollowed,
-                           teams=teams_data)
+                           teams=teams_name)
 
 
 # return render_template("home.html", user=current_user)

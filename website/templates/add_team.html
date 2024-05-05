@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content %}
 
 <!-- add_team.html -->
 
@@ -8,6 +7,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Team</title>
+
+    <style>
+    select {
+        width: 100%; /* Set width to 100% to make the select box take up the full width of its container */
+        padding: 10px; /* Add some padding for aesthetics */
+        color: black; /* Set font color to black */
+
+    }
+</style>
+
 </head>
 <body>
     <h1>Add Team</h1>
@@ -15,7 +24,8 @@
         <label for="team">Select a team to follow:</label>
         <select name="team" id="team">
             {% for team in teams %}
-            <option value="{{ team.id }}">{{ team.name }}</option>
+        <option value="{{ team}}">{{ team }}</option>
+
             {% endfor %}
         </select>
         <button type="submit">Add Team</button>
@@ -23,3 +33,4 @@
 </body>
 </html>
 {% endblock %}
+
