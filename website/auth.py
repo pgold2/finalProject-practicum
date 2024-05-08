@@ -70,34 +70,48 @@ def sign_up():
 
 @auth.route('/StatsDashboard', methods=['GET', 'POST'])
 def stats_dashboard():
-    # Fetch data for the team statistics from your database or any other source
-    team_name = "Example Team"  # Replace with actual team name
-    total_games_played = 10  # Replace with actual total games played
-    total_wins = 6  # Replace with actual total wins
-    total_losses = 4  # Replace with actual total losses
-    winning_percentage = (
-                                 total_wins / total_games_played) * 100 if total_games_played > 0 else 0  # Calculate winning percentage
-    average_runs_scored = 4.8  # Replace with actual average runs scored per game
-    average_runs_allowed = 3.2  # Replace with actual average runs allowed per game
+    # First, make a request to the endpoint that lists all teams
+    url = "https://api-nba-v1.p.rapidapi.com/teams"
+    headers = {
+        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
 
-    # Example game statistics data
-    game_statistics = [
-        {"date": "2024-04-01", "opponent": "Opponent Team A", "result": "Win", "score": "7-4", "runs_scored": 7,
-         "runs_allowed": 4},
-        {"date": "2024-04-02", "opponent": "Opponent Team B", "result": "Loss", "score": "2-5", "runs_scored": 2,
-         "runs_allowed": 5}
-    ]
+    response = requests.get(url, headers=headers)
 
-    return render_template('stats_dashboard.html',
-                           team_name=team_name,
-                           total_games_played=total_games_played,
-                           total_wins=total_wins,
-                           total_losses=total_losses,
-                           winning_percentage=winning_percentage,
-                           game_statistics=game_statistics,
-                           user=current_user)
+    # Check if the request was successful
+    if response.status_code == 200:
+        teams = response.json()['response']
+        # Loop through the user's followed teams and get the name of each team
+        team_id = None  # Initialize team_id to None
+        for followed_team in current_user.teamsFollowed:
+            team_name = followed_team
+            print(f"Followed team name: {team_name}")  # Print the followed team name
+            for team in teams:
+                if team['name'] == team_name:
+                    team_id = team['id']
+                    print(f"Matched team ID: {team_id}")  # Print the matched team ID
+                    break
 
+    # Check if team_id is still None
+    if team_id is None:
+        # Handle case where team name from user's followed teams did not match any team name in API response
+        # For example, you can return an error message
+        flash('Team not found.', category='error')
+        return redirect(url_for('views.home'))
 
+    # Then, make a request to the statistics endpoint using the team's ID
+    url = "https://api-nba-v1.p.rapidapi.com/teams/statistics"
+    querystring = {"id": team_id, "season": "2023"}
+
+    response = requests.get(url, headers=headers, params=querystring)
+    team_stats = response.json()
+
+    print(team_stats)
+
+    teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
+
+    return render_template('stats_dashboard.html', team_stats=team_stats, user=current_user, teamsFollowed=teamsFollowed)
 # @auth.route('/select_team', methods=['GET', 'POST'])
 # @login_required
 # def select_team():
