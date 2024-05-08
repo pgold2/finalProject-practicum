@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
-from flask_migrate import Migrate#added this to add a teams column
+from flask_migrate import Migrate #added this to add a teams column
 
 db = SQLAlchemy()
 DB_NAME = "database.db"

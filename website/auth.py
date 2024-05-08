@@ -140,7 +140,7 @@ def add_team():
             teams.append(team_name)
 
     if request.method == 'POST':
-        team_name = request.form.get('name')
+        team_name = request.form.get('team')
 
         # Create a new Team object with the specified name
         new_team = Team(name=team_name)
