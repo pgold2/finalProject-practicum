@@ -22,17 +22,18 @@ def home():
 
     # Check if the request was successful
     if response.status_code == 200:
-        # Render the template with the data
-        teams_name = response.json()['response']
+        # Extract the team names from the response
+        teams_data = response.json().get('response', [])
+        teams_name = [team.get('name') for team in teams_data]
     else:
-        # If the request failed, return an error message
+        # If the request failed, set teams_name to None
         teams_name = None
 
-    # added this to display user's name and team
+    # Retrieve the user's first name
     user_name = current_user.first_name  # Assuming the user's first name is stored in the database
-    teamsFollowed = current_user.teamsFollowed  # Assuming teams followed are stored in the database
-    if teamsFollowed is None:
-        teamsFollowed = []  # Handle case where teamsFollowed is None
+
+    # Retrieve the list of teams followed by the current user
+    teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
 
     if request.method == 'POST':
         note = request.form.get('note')  # Gets the note from the HTML
@@ -40,13 +41,14 @@ def home():
         if len(note) < 1:
             flash('Note is too short!', category='error')
         else:
-            new_note = Note(data=note, user_id=current_user.id)  # providing the schema for the note
-            db.session.add(new_note)  # adding the note to the database
-            db.session.commit()
+            new_note = Note(data=note, user_id=current_user.id)  # Create a new Note object
+            db.session.add(new_note)  # Add the new Note object to the database
+            db.session.commit()  # Commit the changes to the database
             flash('Note added!', category='success')
 
-    return render_template('home.html', user=current_user, user_name=user_name, teamsFollowed=teamsFollowed,
-                           teams=teams_name)
+    # Render the home.html template with the retrieved data
+    return render_template('home.html', user=current_user, user_name=user_name,
+                           teamsFollowed=teamsFollowed, teams=teams_name)
 
 
 # return render_template("home.html", user=current_user)
@@ -69,7 +71,7 @@ def delete_note():
 @login_required
 def select_team():
     # Fetch teams available for selection
-    # Assuming you have a model named Team to represent teams
+    # model named Team to represent teams
     teams = Team.query.all()  # Retrieve all teams from the database
 
     if request.method == 'POST':
@@ -82,13 +84,12 @@ def select_team():
     return render_template('select_team.html', teams=teams)
 
 
-@views.route('/update_teams_followed', methods=['POST'])
-@login_required
-def update_teams_followed():
-    teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
-    current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
-    db.session.commit()
-    flash('Teams followed updated successfully!', category='success')
-    return redirect(url_for('views.select_team'))
-
+#@views.route('/update_teams_followed', methods=['POST'])
+#@login_required
+#def update_teams_followed():
+#    teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
+#    current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
+#    db.session.commit()
+#   flash('Teams followed updated successfully!', category='success')
+#   return redirect(url_for('views.select_team'))
 

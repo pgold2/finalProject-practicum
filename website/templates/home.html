@@ -2,10 +2,12 @@
 %}
     <div class="container">
         <h1>Hello, {{ user_name }}</h1>
-        <p>You are following the following teams:</p>
-        <ul>
-        <li>{{ teamsFollowed }}</li>
-        </ul>
+    <p>You are following the following teams:</p>
+    <ul>
+        {% for team in teamsFollowed %}
+            <li>{{ team.name }}</li>
+        {% endfor %}
+    </ul>
 
 <h1 align="center">Notes</h1>
 <ul class="list-group list-group-flush" id="notes">
