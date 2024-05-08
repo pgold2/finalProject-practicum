@@ -45,23 +45,20 @@
     </style>
 </head>
 <body>
-    <h1>Teams Statistics</h1>
+    <h1>Current NBA Teams </h1>
     <table>
         <thead>
             <tr>
-                <th>Team ID</th>
+
                 <th>Team Name</th>
-                <th>Conference</th>
-                <th>Division</th>
+
             </tr>
         </thead>
         <tbody>
             {% for team in teams %}
             <tr>
-                <td>{{ team.team_id }}</td>
+
                 <td>{{ team.name }}</td>
-                <td>{{ team.conference }}</td>
-                <td>{{ team.division }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,3 +1,4 @@
+import requests
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from .models import Team
@@ -97,15 +98,63 @@ def stats_dashboard():
                            user=current_user)
 
 
-@auth.route('/select_team', methods=['GET', 'POST'])
-@login_required
-def select_team():
-    if request.method == 'POST':
-        team_id = request.form.get('team_id')
-        # Update the user's selected team
-        current_user.selected_team_id = team_id
-        db.session.commit()
-        return redirect(url_for('stats_dashboard'))  # Redirect to the stats dashboard or wherever you want
+# @auth.route('/select_team', methods=['GET', 'POST'])
+# @login_required
+# def select_team():
+#     if request.method == 'POST':
+#         team_id = request.form.get('team_id')
+#         # Update the user's selected team
+#         current_user.selected_team_id = team_id
+#         db.session.commit()
+#         return redirect(url_for('stats_dashboard'))  # Redirect to the stats dashboard or wherever you want
+#
+#     teams = Team.query.all()
+#     return render_template('select_team.html', teams=teams)
+#
 
-    teams = Team.query.all()
-    return render_template('select_team.html', teams=teams)
+@auth.route('/add_team', methods=['GET', 'POST'])
+@login_required
+def add_team():
+    # Make the API request to retrieve data about teams
+    url = "https://api-nba-v1.p.rapidapi.com/teams"
+    headers = {
+        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Print the response to inspect its structure
+        print(response.json())
+
+        # Render the template with the data
+        teams_data = response.json()['response']
+
+        teams = []
+        for team in teams_data:
+            print(team)
+
+            team_name = team['name']
+
+            teams.append(team_name)
+
+    if request.method == 'POST':
+        team_name = request.form.get('team')
+
+        # Create a new Team object with the specified name
+        new_team = Team(name=team_name)
+
+        # Add the new Team object to the database
+        db.session.add(new_team)
+
+        # Add the new Team object to the teams_followed list of the current_user
+        current_user.teams_followed.append(new_team)
+
+        # Commit the changes to the database
+        db.session.commit()
+
+        flash('Team added successfully!', category='success')
+        return redirect(url_for('views.home'))
+
+    return render_template('add_team.html', teams=teams, user=current_user)
