@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from .models import Team
 from werkzeug.security import generate_password_hash, check_password_hash
-from . import db  ##means from __init__.py import db
+from . import db  ##means from _init_.py import db
 from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
@@ -70,48 +70,23 @@ def sign_up():
 
 @auth.route('/StatsDashboard', methods=['GET', 'POST'])
 def stats_dashboard():
-    # First, make a request to the endpoint that lists all teams
-    url = "https://api-nba-v1.p.rapidapi.com/teams"
-    headers = {
-        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
-        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
-    }
+    teamsFollowed, teams_name, user_name = getFollowedTeams()
 
-    response = requests.get(url, headers=headers)
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        teams = response.json()['response']
-        # Loop through the user's followed teams and get the name of each team
-        team_id = None  # Initialize team_id to None
-        for followed_team in current_user.teamsFollowed:
-            team_name = followed_team
-            print(f"Followed team name: {team_name}")  # Print the followed team name
-            for team in teams:
-                if team['name'] == team_name:
-                    team_id = team['id']
-                    print(f"Matched team ID: {team_id}")  # Print the matched team ID
-                    break
-
-    # Check if team_id is still None
-    if team_id is None:
-        # Handle case where team name from user's followed teams did not match any team name in API response
-        # For example, you can return an error message
-        flash('Team not found.', category='error')
-        return redirect(url_for('views.home'))
-
-    # Then, make a request to the statistics endpoint using the team's ID
+     #THIS API CALL IS FOR STATISTICS
+    # # Fetch data for the team statistics from your database or any other source
     url = "https://api-nba-v1.p.rapidapi.com/teams/statistics"
-    querystring = {"id": team_id, "season": "2023"}
-
+    querystring = {"id":"1","season":"2020"}
+    headers = {
+         "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
+         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+     }
     response = requests.get(url, headers=headers, params=querystring)
     team_stats = response.json()
 
-    print(team_stats)
-
-    teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
-
-    return render_template('stats_dashboard.html', team_stats=team_stats, user=current_user, teamsFollowed=teamsFollowed)
+    # Now you can use the 'team_stats' variable in your template
+    return render_template('stats_dashboard.html', team_stats=team_stats, user=current_user, teamsFollowed=teamsFollowed,
+                           teams=teams_name)
 # @auth.route('/select_team', methods=['GET', 'POST'])
 # @login_required
 # def select_team():
@@ -172,3 +147,27 @@ def add_team():
         return redirect(url_for('views.home'))
 
     return render_template('add_team.html', teams=teams, user=current_user)
+
+
+def getFollowedTeams():
+    # Make the API request to retrieve data about teams
+    url = "https://api-nba-v1.p.rapidapi.com/teams"
+    headers = {
+        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        # Extract the team names from the response
+        teams_data = response.json().get('response', [])
+        teams_name = [team.get('name') for team in teams_data]
+    else:
+        # If the request failed, set teams_name to None
+        teams_name = None
+
+        # Retrieve the user's first name
+    user_name = current_user.first_name  # Assuming the user's first name is stored in the database
+    # Retrieve the list of teams followed by the current user
+    teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
+    return teamsFollowed, teams_name, user_name
+

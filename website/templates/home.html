@@ -2,7 +2,7 @@
 %}
     <div class="container">
         <h1>Hello, {{ user_name }}</h1>
-    <p>You are following the following teams:</p>
+         <p>You are following the following teams:</p>
     <ul>
         {% for team in teamsFollowed %}
             <li>{{ team.name }}</li>
@@ -47,24 +47,7 @@
     </style>
 </head>
 <body>
-    <h1>Current NBA Teams </h1>
-    <table>
-        <thead>
-            <tr>
 
-                <th>Team Name</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            {% for team in teams %}
-            <tr>
-
-                <td>{{ team.name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </body>
 </html>
 {% endblock %}

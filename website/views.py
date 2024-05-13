@@ -12,6 +12,24 @@ views = Blueprint('views', __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+    teamsFollowed, teams_name, user_name = getFollowedTeams()
+
+    if request.method == 'POST':
+        note = request.form.get('note')  # Gets the note from the HTML
+
+        if len(note) < 1:
+            flash('Note is too short!', category='error')
+        else:
+            new_note = Note(data=note, user_id=current_user.id)  # providing the schema for the note
+            db.session.add(new_note)  # adding the note to the database
+            db.session.commit()
+            flash('Note added!', category='success')
+
+    return render_template('home.html', user=current_user, user_name=user_name, teamsFollowed=teamsFollowed,
+                           teams=teams_name)
+
+
+def getFollowedTeams():
     # Make the API request to retrieve data about teams
     url = "https://api-nba-v1.p.rapidapi.com/teams"
     headers = {
@@ -19,8 +37,6 @@ def home():
         "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers)
-
-    # Check if the request was successful
     if response.status_code == 200:
         # Extract the team names from the response
         teams_data = response.json().get('response', [])
@@ -29,26 +45,11 @@ def home():
         # If the request failed, set teams_name to None
         teams_name = None
 
-    # Retrieve the user's first name
+        # Retrieve the user's first name
     user_name = current_user.first_name  # Assuming the user's first name is stored in the database
-
     # Retrieve the list of teams followed by the current user
     teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
-
-    if request.method == 'POST':
-        note = request.form.get('note')  # Gets the note from the HTML
-
-        if len(note) < 1:
-            flash('Note is too short!', category='error')
-        else:
-            new_note = Note(data=note, user_id=current_user.id)  # Create a new Note object
-            db.session.add(new_note)  # Add the new Note object to the database
-            db.session.commit()  # Commit the changes to the database
-            flash('Note added!', category='success')
-
-    # Render the home.html template with the retrieved data
-    return render_template('home.html', user=current_user, user_name=user_name,
-                           teamsFollowed=teamsFollowed, teams=teams_name)
+    return teamsFollowed, teams_name, user_name
 
 
 # return render_template("home.html", user=current_user)
@@ -71,7 +72,7 @@ def delete_note():
 @login_required
 def select_team():
     # Fetch teams available for selection
-    # model named Team to represent teams
+    # Assuming you have a model named Team to represent teams
     teams = Team.query.all()  # Retrieve all teams from the database
 
     if request.method == 'POST':
@@ -84,12 +85,13 @@ def select_team():
     return render_template('select_team.html', teams=teams)
 
 
-#@views.route('/update_teams_followed', methods=['POST'])
-#@login_required
-#def update_teams_followed():
-#    teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
-#    current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
-#    db.session.commit()
-#   flash('Teams followed updated successfully!', category='success')
-#   return redirect(url_for('views.select_team'))
-
+# @views.route('/update_teams_followed', methods=['POST'])
+# @login_required
+# def update_teams_followed():
+#     teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
+#     current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
+#     db.session.commit()
+#     flash('Teams followed updated successfully!', category='success')
+#     return redirect(url_for('views.select_team'))
+#
+#

@@ -9,20 +9,47 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="stats_dashboardStyle.css">
-    <!-- Additional CSS styles here -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1em;
+        }
+        h1, h2, h3 {
+            color: #007bff;
+        }
+        .stats-summary {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: .25rem;
+            padding: 1em;
+            margin-bottom: 1em;
+        }
+        .stats-summary ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .stats-summary ul li {
+            padding: .5em 0;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Basketball Team Stats Dashboard</h1>
         <h2>Team:          </h2>
-<h2>
-        <ul>
+
+        <select name="teamsFollowed" id="teamsFollowed">
         {% for team in teamsFollowed %}
-            <li>{{ team.name }}</li>
-        {% endfor%}
-        </ul>
-</h2>
+            <option value="{{ team.name}}">{{ team.name }}</option>
+        {% endfor %}
+</select>
+
         <div class="stats-summary">
             <h3>Summary</h3>
             <ul>
