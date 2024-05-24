@@ -5,13 +5,21 @@ from flask_login import LoginManager
 from flask_migrate import Migrate #added this to add a teams column
 
 db = SQLAlchemy()
-DB_NAME = "database.db"
+#This is the connection to AWS
+#DB_NAME = "database-2"
 
+
+DB_NAME = "database.db" #for local connection
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'hjshjhdjah kjshkjdhjs'
+
+    # for local connection
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+
+#This is the connection to AWS
+    #app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://admin:playpulse@database-2.czu4sq4uomtn.us-east-1.rds.amazonaws.com/{DB_NAME}'
     db.init_app(app)
     migrate = Migrate(app, db)#added this to add a teams column
 

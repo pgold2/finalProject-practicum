@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,43 +43,46 @@
 <body>
     <div class="container">
         <h1>Basketball Team Stats Dashboard</h1>
-        <h2>Team:          </h2>
-
+        <h2>Team:</h2>
         <select name="teamsFollowed" id="teamsFollowed">
-        {% for team in teamsFollowed %}
-            <option value="{{ team.name}}">{{ team.name }}</option>
-        {% endfor %}
-</select>
+            {% for team in teamsFollowed %}
+                <option value="{{ team.name }}">{{ team.name }}</option>
+            {% endfor %}
+        </select>
 
         <div class="stats-summary">
             <h3>Summary</h3>
             <ul>
-                <li>Total Games Played: {{ team_stats['response'][0]['games'] }}</li>
-                <li>Fast Break Points: {{ team_stats['response'][0]['fastBreakPoints'] }}</li>
-                <li>Points In Paint: {{ team_stats['response'][0]['pointsInPaint'] }}</li>
-                <li>Biggest Lead: {{ team_stats['response'][0]['biggestLead'] }}</li>
-                <li>Second Chance Points: {{ team_stats['response'][0]['secondChancePoints'] }}</li>
-                <li>Points Off Turnovers: {{ team_stats['response'][0]['pointsOffTurnovers'] }}</li>
-                <li>Longest Run: {{ team_stats['response'][0]['longestRun'] }}</li>
-                <li>Total Points: {{ team_stats['response'][0]['points'] }}</li>
-                <li>Field Goals Made: {{ team_stats['response'][0]['fgm'] }}</li>
-                <li>Field Goals Attempted: {{ team_stats['response'][0]['fga'] }}</li>
-                <li>Field Goal Percentage: {{ team_stats['response'][0]['fgp'] }}</li>
-                <li>Free Throws Made: {{ team_stats['response'][0]['ftm'] }}</li>
-                <li>Free Throws Attempted: {{ team_stats['response'][0]['fta'] }}</li>
-                <li>Free Throw Percentage: {{ team_stats['response'][0]['ftp'] }}</li>
-                <li>Three Pointers Made: {{ team_stats['response'][0]['tpm'] }}</li>
-                <li>Three Pointers Attempted: {{ team_stats['response'][0]['tpa'] }}</li>
-                <li>Three Point Percentage: {{ team_stats['response'][0]['tpp'] }}</li>
-                <li>Offensive Rebounds: {{ team_stats['response'][0]['offReb'] }}</li>
-                <li>Defensive Rebounds: {{ team_stats['response'][0]['defReb'] }}</li>
-                <li>Total Rebounds: {{ team_stats['response'][0]['totReb'] }}</li>
-                <li>Assists: {{ team_stats['response'][0]['assists'] }}</li>
-                <li>Personal Fouls: {{ team_stats['response'][0]['pFouls'] }}</li>
-                <li>Steals: {{ team_stats['response'][0]['steals'] }}</li>
-                <li>Turnovers: {{ team_stats['response'][0]['turnovers'] }}</li>
-                <li>Blocks: {{ team_stats['response'][0]['blocks'] }}</li>
-                <li>Plus Minus: {{ team_stats['response'][0]['plusMinus'] }}</li>
+                {% if team_stats['response'][0] %}
+                    <li>Total Games Played: {{ team_stats['response'][0].get('games', 'N/A') }}</li>
+                    <li>Fast Break Points: {{ team_stats['response'][0].get('fastBreakPoints', 'N/A') }}</li>
+                    <li>Points In Paint: {{ team_stats['response'][0].get('pointsInPaint', 'N/A') }}</li>
+                    <li>Biggest Lead: {{ team_stats['response'][0].get('biggestLead', 'N/A') }}</li>
+                    <li>Second Chance Points: {{ team_stats['response'][0].get('secondChancePoints', 'N/A') }}</li>
+                    <li>Points Off Turnovers: {{ team_stats['response'][0].get('pointsOffTurnovers', 'N/A') }}</li>
+                    <li>Longest Run: {{ team_stats['response'][0].get('longestRun', 'N/A') }}</li>
+                    <li>Total Points: {{ team_stats['response'][0].get('points', 'N/A') }}</li>
+                    <li>Field Goals Made: {{ team_stats['response'][0].get('fgm', 'N/A') }}</li>
+                    <li>Field Goals Attempted: {{ team_stats['response'][0].get('fga', 'N/A') }}</li>
+                    <li>Field Goal Percentage: {{ team_stats['response'][0].get('fgp', 'N/A') }}</li>
+                    <li>Free Throws Made: {{ team_stats['response'][0].get('ftm', 'N/A') }}</li>
+                    <li>Free Throws Attempted: {{ team_stats['response'][0].get('fta', 'N/A') }}</li>
+                    <li>Free Throw Percentage: {{ team_stats['response'][0].get('ftp', 'N/A') }}</li>
+                    <li>Three Pointers Made: {{ team_stats['response'][0].get('tpm', 'N/A') }}</li>
+                    <li>Three Pointers Attempted: {{ team_stats['response'][0].get('tpa', 'N/A') }}</li>
+                    <li>Three Point Percentage: {{ team_stats['response'][0].get('tpp', 'N/A') }}</li>
+                    <li>Offensive Rebounds: {{ team_stats['response'][0].get('offReb', 'N/A') }}</li>
+                    <li>Defensive Rebounds: {{ team_stats['response'][0].get('defReb', 'N/A') }}</li>
+                    <li>Total Rebounds: {{ team_stats['response'][0].get('totReb', 'N/A') }}</li>
+                    <li>Assists: {{ team_stats['response'][0].get('assists', 'N/A') }}</li>
+                    <li>Personal Fouls: {{ team_stats['response'][0].get('pFouls', 'N/A') }}</li>
+                    <li>Steals: {{ team_stats['response'][0].get('steals', 'N/A') }}</li>
+                    <li>Turnovers: {{ team_stats['response'][0].get('turnovers', 'N/A') }}</li>
+                    <li>Blocks: {{ team_stats['response'][0].get('blocks', 'N/A') }}</li>
+                    <li>Plus Minus: {{ team_stats['response'][0].get('plusMinus', 'N/A') }}</li>
+                {% else %}
+                    <li>No statistics available.</li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -86,6 +90,38 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-{% endblock %}
+    <script>
+        var selectElement = document.getElementsByName('teamsFollowed')[0];
+
+        selectElement.addEventListener('change', function() {
+            var selectedTeam = selectElement.value;
+            console.log(selectedTeam);  // Debugging print statement
+
+            // Send the selected team to the server
+            fetch('/set_selected_team', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'selected_team': selectedTeam,
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();  // Reload the page to update the statistics
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>
