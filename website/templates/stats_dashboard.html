@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,44 +11,31 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="stats_dashboardStyle.css">
     <style>
-        /* Additional CSS for color styling */
-
-        /* Body background color */
         body {
             background-color: #f8f9fa;
+            color: #333;
         }
-
-        /* Container background color */
         .container {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 800px;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1em;
         }
-
-        /* Heading color */
         h1, h2, h3 {
-            color: #007bff; /* Blue color */
-            text-align: center;
+            color: #007bff;
         }
-
-        /* Summary heading color */
-        .stats-summary h3 {
-            color: #007bff; /* Blue color */
-            margin-bottom: 10px;
+        .stats-summary {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: .25rem;
+            padding: 1em;
+            margin-bottom: 1em;
         }
-
-        /* Table header background color */
-        .stats-table th {
-            background-color: #007bff; /* Blue color */
-            color: #fff; /* White color */
+        .stats-summary ul {
+            list-style-type: none;
+            padding: 0;
         }
-
-        /* Table row background color on hover */
-        .stats-table tr:hover {
-            background-color: #cce5ff; /* Light blue color */
+        .stats-summary ul li {
+            padding: .5em 0;
         }
     </style>
 </head>
@@ -56,49 +43,85 @@
 <body>
     <div class="container">
         <h1>Basketball Team Stats Dashboard</h1>
-        <h2>Team: teamsFollowed.TeamID</h2>
+        <h2>Team:</h2>
+        <select name="teamsFollowed" id="teamsFollowed">
+            {% for team in teamsFollowed %}
+                <option value="{{ team.name }}">{{ team.name }}</option>
+            {% endfor %}
+        </select>
+
         <div class="stats-summary">
             <h3>Summary</h3>
             <ul>
-                <li>Total Games Played: [Total Games Played]</li>
-                <li>Total Wins: [Total Wins]</li>
-                <li>Total Losses: [Total Losses]</li>
-                <li>Winning Percentage: [Winning Percentage]</li>
+                {% if team_stats['response'][0] %}
+                    <li>Total Games Played: {{ team_stats['response'][0].get('games', 'N/A') }}</li>
+                    <li>Fast Break Points: {{ team_stats['response'][0].get('fastBreakPoints', 'N/A') }}</li>
+                    <li>Points In Paint: {{ team_stats['response'][0].get('pointsInPaint', 'N/A') }}</li>
+                    <li>Biggest Lead: {{ team_stats['response'][0].get('biggestLead', 'N/A') }}</li>
+                    <li>Second Chance Points: {{ team_stats['response'][0].get('secondChancePoints', 'N/A') }}</li>
+                    <li>Points Off Turnovers: {{ team_stats['response'][0].get('pointsOffTurnovers', 'N/A') }}</li>
+                    <li>Longest Run: {{ team_stats['response'][0].get('longestRun', 'N/A') }}</li>
+                    <li>Total Points: {{ team_stats['response'][0].get('points', 'N/A') }}</li>
+                    <li>Field Goals Made: {{ team_stats['response'][0].get('fgm', 'N/A') }}</li>
+                    <li>Field Goals Attempted: {{ team_stats['response'][0].get('fga', 'N/A') }}</li>
+                    <li>Field Goal Percentage: {{ team_stats['response'][0].get('fgp', 'N/A') }}</li>
+                    <li>Free Throws Made: {{ team_stats['response'][0].get('ftm', 'N/A') }}</li>
+                    <li>Free Throws Attempted: {{ team_stats['response'][0].get('fta', 'N/A') }}</li>
+                    <li>Free Throw Percentage: {{ team_stats['response'][0].get('ftp', 'N/A') }}</li>
+                    <li>Three Pointers Made: {{ team_stats['response'][0].get('tpm', 'N/A') }}</li>
+                    <li>Three Pointers Attempted: {{ team_stats['response'][0].get('tpa', 'N/A') }}</li>
+                    <li>Three Point Percentage: {{ team_stats['response'][0].get('tpp', 'N/A') }}</li>
+                    <li>Offensive Rebounds: {{ team_stats['response'][0].get('offReb', 'N/A') }}</li>
+                    <li>Defensive Rebounds: {{ team_stats['response'][0].get('defReb', 'N/A') }}</li>
+                    <li>Total Rebounds: {{ team_stats['response'][0].get('totReb', 'N/A') }}</li>
+                    <li>Assists: {{ team_stats['response'][0].get('assists', 'N/A') }}</li>
+                    <li>Personal Fouls: {{ team_stats['response'][0].get('pFouls', 'N/A') }}</li>
+                    <li>Steals: {{ team_stats['response'][0].get('steals', 'N/A') }}</li>
+                    <li>Turnovers: {{ team_stats['response'][0].get('turnovers', 'N/A') }}</li>
+                    <li>Blocks: {{ team_stats['response'][0].get('blocks', 'N/A') }}</li>
+                    <li>Plus Minus: {{ team_stats['response'][0].get('plusMinus', 'N/A') }}</li>
+                {% else %}
+                    <li>No statistics available.</li>
+                {% endif %}
             </ul>
-        </div>
-        <div class="stats-table">
-            <h3>Game Statistics</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Opponent</th>
-                        <th>Result</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Example data rows, replace with actual data -->
-                    <tr>
-                        <td>2024-04-01</td>
-                        <td>Opponent Team A</td>
-                        <td>Win</td>
-                        <td>7-4</td>
-                    </tr>
-                    <tr>
-                        <td>2024-04-02</td>
-                        <td>Opponent Team B</td>
-                        <td>Loss</td>
-                        <td>2-5</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-{% endblock %}
+    <script>
+        var selectElement = document.getElementsByName('teamsFollowed')[0];
+
+        selectElement.addEventListener('change', function() {
+            var selectedTeam = selectElement.value;
+            console.log(selectedTeam);  // Debugging print statement
+
+            // Send the selected team to the server
+            fetch('/set_selected_team', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'selected_team': selectedTeam,
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                console.log('Success:', data);
+                location.reload();  // Reload the page to update the statistics
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
 </html>

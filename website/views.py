@@ -12,27 +12,7 @@ views = Blueprint('views', __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    # Make the API request to retrieve data about teams
-    url = "https://api-nba-v1.p.rapidapi.com/teams"
-    headers = {
-        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
-        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
-    }
-    response = requests.get(url, headers=headers)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Render the template with the data
-        teams_name = response.json()['response']
-    else:
-        # If the request failed, return an error message
-        teams_name = None
-
-    # added this to display user's name and team
-    user_name = current_user.first_name  # Assuming the user's first name is stored in the database
-    teamsFollowed = current_user.teamsFollowed  # Assuming teams followed are stored in the database
-    if teamsFollowed is None:
-        teamsFollowed = []  # Handle case where teamsFollowed is None
+    teamsFollowed, teams_name, user_name = getFollowedTeams()
 
     if request.method == 'POST':
         note = request.form.get('note')  # Gets the note from the HTML
@@ -47,6 +27,29 @@ def home():
 
     return render_template('home.html', user=current_user, user_name=user_name, teamsFollowed=teamsFollowed,
                            teams=teams_name)
+
+
+def getFollowedTeams():
+    # Make the API request to retrieve data about teams
+    url = "https://api-nba-v1.p.rapidapi.com/teams"
+    headers = {
+        "X-RapidAPI-Key": "37b97f1111msh366b855c4b97860p13932ajsnfe18b5af644a",
+        "X-RapidAPI-Host": "api-nba-v1.p.rapidapi.com"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        # Extract the team names from the response
+        teams_data = response.json().get('response', [])
+        teams_name = [team.get('name') for team in teams_data]
+    else:
+        # If the request failed, set teams_name to None
+        teams_name = None
+
+        # Retrieve the user's first name
+    user_name = current_user.first_name  # Assuming the user's first name is stored in the database
+    # Retrieve the list of teams followed by the current user
+    teamsFollowed = current_user.teams_followed if current_user.teams_followed else []
+    return teamsFollowed, teams_name, user_name
 
 
 # return render_template("home.html", user=current_user)
@@ -82,13 +85,13 @@ def select_team():
     return render_template('select_team.html', teams=teams)
 
 
-@views.route('/update_teams_followed', methods=['POST'])
-@login_required
-def update_teams_followed():
-    teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
-    current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
-    db.session.commit()
-    flash('Teams followed updated successfully!', category='success')
-    return redirect(url_for('views.select_team'))
-
-
+# @views.route('/update_teams_followed', methods=['POST'])
+# @login_required
+# def update_teams_followed():
+#     teams_followed = request.form.getlist('teams_followed')  # Assuming you're using checkboxes to select teams
+#     current_user.teamsFollowed = ','.join(teams_followed)  # Convert list to comma-separated string
+#     db.session.commit()
+#     flash('Teams followed updated successfully!', category='success')
+#     return redirect(url_for('views.select_team'))
+#
+#
